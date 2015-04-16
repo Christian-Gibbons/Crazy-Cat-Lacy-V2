@@ -1,26 +1,6 @@
 
 BasicGame.Level2 = function (game) {
-/*
-	// When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
-	this.game; // a reference to the currently running game (Phaser.Game)
-	this.add; // used to add sprites, text, groups, etc (Phaser.GameObjectFactory)
-	this.camera; // a reference to the game camera (Phaser.Camera)
-	this.cache; // the game cache (Phaser.Cache)
-	this.input; // the global input manager. You can access this.input.keyboard, this.input.mouse, as well from it. (Phaser.Input)
-	this.load; // for preloading assets (Phaser.Loader)
-	this.math; // lots of useful common math operations (Phaser.Math)
-	this.sound; // the sound manager - add a sound, play one, set-up markers, etc (Phaser.SoundManager)
-	this.stage; // the game stage (Phaser.Stage)
-	this.time; // the clock (Phaser.Time)
-	this.tweens; // the tween manager (Phaser.TweenManager)
-	this.state; // the state manager (Phaser.StateManager)
-	this.world; // the game world (Phaser.World)
-	this.particles; // the particle manager (Phaser.Particles)
-	this.physics; // the physics manager (Phaser.Physics)
-	this.rnd; // the repeatable random number generator (Phaser.RandomDataGenerator)
-	// You can use any of these from any function within this State.
-	// But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
-*/
+
 };
 
 	var map;
@@ -31,10 +11,12 @@ BasicGame.Level2 = function (game) {
 	var death;
 BasicGame.Level2.prototype = {
 	create: function () {
-		this.stage.backgroundColor = '#8000F0';
-		map = this.add.tilemap('map2');
-		map.addTilesetImage('scraps_bricks', 'bricks');
+		this.stage.backgroundColor = '#8080FF';
+		map = this.add.tilemap('map'+levelID);
+		map.addTilesetImage('tiles_22', 'platforms');
+		map.addTilesetImage('box', 'box');
 
+		createPlatformer(this);/*
 		fringeLayer = map.createLayer('Fringe');
 		collisionLayer = map.createLayer('Collision');
 		collisionLayer.visible = false;
@@ -54,18 +36,22 @@ BasicGame.Level2.prototype = {
 
 		this.camera.follow(player);
 		this.camera.deadzone = new Phaser.Rectangle(100,100,250,400);
-
+*/		background_music = this.add.audio('grassy_music');
+		background_music.play('',0,1,true,true);
 	},
 	update: function () {
 		// Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
 		updatePlatformer(this);
 		if(coins.total === 0){
-			var leprechaun = this.add.sprite(player.x, player.y, 'leprechaun');
-			leprechaun.anchor.x=player.anchor.x;
-			leprechaun.anchor.y=player.anchor.y;
-			player.kill();
-		//	this.state.start('');
+			levelID++;
+			//collisionLayer.destroy();
+			//fringeLayer.destroy();
+			background_music.stop();
+			map.destroy();
+			this.world.setBounds(0,0,0,0);
+			this.state.start('Level' + levelID);
 		}
+
 	},
 	quitGame: function (pointer) {
 		// Here you should destroy anything you no longer need.

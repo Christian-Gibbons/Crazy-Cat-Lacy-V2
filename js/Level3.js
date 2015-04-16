@@ -1,4 +1,4 @@
-BasicGame.Level1 = function (game) {
+BasicGame.Level3 = function (game) {
 
 };
 
@@ -8,16 +8,14 @@ BasicGame.Level1 = function (game) {
 	var collisionLayer;
 
 	var death;
-BasicGame.Level1.prototype = {
+BasicGame.Level3.prototype = {
 	create: function () {
-		this.stage.backgroundColor = '#8080FF';
-		map = this.add.tilemap('map' + levelID);
-		map.addTilesetImage('tiles_22', 'platforms');
-		map.addTilesetImage('box', 'box');
+		this.stage.backgroundColor = '#8000F0';
+		map = this.add.tilemap('map'+ levelID);
+		map.addTilesetImage('scraps_bricks', 'bricks');
 
 		createPlatformer(this);
-
-		background_music = this.add.audio('grassy_music');
+		background_music = this.add.sound('underground_music');
 		background_music.play('',0,1,true,true);
 
 	},
@@ -26,8 +24,6 @@ BasicGame.Level1.prototype = {
 		updatePlatformer(this);
 		if(coins.total === 0){
 			levelID++;
-			//collisionLayer.destroy();
-			//fringeLayer.destroy();
 			background_music.stop();
 			map.destroy();
 			this.world.setBounds(0,0,0,0);

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Platformer</title>
+<title>Platformer V2</title>
 <script src="js/phaser.min.js"></script>
 <script src="js/Boot.js"></script>
 <script src="js/Preloader.js"></script>
@@ -10,6 +10,8 @@
 <script src="js/Level1.js"></script>
 <script src="js/main.js"></script>
 <script src="js/Level2.js"></script>
+<script src="js/Level3.js"></script>
+<script src="js/Level4.js"></script>
 </head>
 <body>
 <div id="gameContainer"></div>
@@ -25,6 +27,8 @@ game.state.add('Preloader', BasicGame.Preloader);
 game.state.add('MainMenu', BasicGame.MainMenu);
 game.state.add('Level1', BasicGame.Level1);
 game.state.add('Level2', BasicGame.Level2);
+game.state.add('Level3', BasicGame.Level3);
+game.state.add('Level4', BasicGame.Level4);
 
 // Now start the Boot state.
 game.state.start('Boot');
@@ -33,7 +37,7 @@ game.state.start('Boot');
 </body>
 <div id="game"></div>
 <div id="readme">
-<h2>Platformer</h2>
+<h2>Platformer V2</h2>
 <ul>
 
 
@@ -42,7 +46,7 @@ game.state.start('Boot');
 </li>
 
 <li><strong>Player Experience Goals:</strong>
-
+A standard platforming affair that increases in difficulty as the game progresses
 </li>
 
 <li><strong>Genre:</strong>
@@ -50,15 +54,15 @@ Platforming
 </li>
 
 <li><strong>Game play:</strong>
-Left and right arrows move character left and right, spacebar is jump.
+Left and right arrows move character left and right, spacebar is jump.  Hold down spacebar longer to jump higher.
 </li>
 
 <li><strong>Prototype goal:</strong>
-Learn to utilize game states and directional collisions.  Also experiment with acceleration and drag.  Most of the development time went into designing the aspects of the engine such as the directional collision; this game has the potential for becoming more compelling with some tweeking in how the controls handle and in adding more levels that are larger and more elaborate.
+Polish up and improve upon my previous platformer.
 </li>
 
 <li><strong>Features:</strong>
-Platforms that can be passed through from the sides and bottom but not the top.
+Directional collision, some difficult platforming.
 </li>
 
 <li><strong>Setting/Premise:</strong>
@@ -70,7 +74,7 @@ Fans of the platforming genre.
 </li>
 
 <li><strong>Play time:</strong>
-Only a couple minutes at most in it's current two-level state
+Depending on the players skill, it could take several minutes.  The last level has some difficult jumps that give players some trouble.
 </li>
 
 <li><strong>Strategies:</strong>

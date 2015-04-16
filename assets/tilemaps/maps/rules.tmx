@@ -27,32 +27,32 @@
    eJxjYMAOjkDpC4w4FJAAAHIXAZY=
   </data>
  </layer>
- <layer name="input_Fringe" width="5" height="5">
+ <layer name="input_Fringe" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYMAOjkLpi4w4FJAAAHKnAZg=
   </data>
  </layer>
- <layer name="input_Fringe" width="5" height="5">
+ <layer name="input_Fringe" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYMAOjkHpS4w4FJAAAHM3AZo=
   </data>
  </layer>
- <layer name="input_Fringe" width="5" height="5">
+ <layer name="input_Fringe" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYMAOZkPpy4w4FJAAAGa3AXA=
   </data>
  </layer>
- <layer name="input_Fringe" width="5" height="5">
+ <layer name="input_Fringe" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYMAO5kDpK4w4FJAAAGdHAXI=
   </data>
  </layer>
- <layer name="input_Fringe" width="5" height="5">
+ <layer name="input_Fringe" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYMAO5kLpq4w4FJAAAGfXAXQ=
   </data>
  </layer>
- <layer name="input_Fringe" width="5" height="5">
+ <layer name="input_Fringe" width="5" height="5" visible="0">
   <data encoding="base64" compression="zlib">
    eJxjYMAO5kHpa4w4FJAAAGhnAXY=
   </data>
@@ -65,6 +65,16 @@
  <layer name="input_Fringe" width="5" height="5">
   <data encoding="base64" compression="zlib">
    eJxjYMAOFkDpG4w4FJAAAGmHAXo=
+  </data>
+ </layer>
+ <layer name="input_Fringe" width="5" height="5">
+  <data encoding="base64" compression="zlib">
+   eJxjYMAPHjMSUEAEAAA88wDl
+  </data>
+ </layer>
+ <layer name="input_Fringe" width="5" height="5">
+  <data encoding="base64" compression="zlib">
+   eJxjYMAP7jESUEAEAAA7nwDg
   </data>
  </layer>
  <layer name="output_Collision" width="5" height="5">
