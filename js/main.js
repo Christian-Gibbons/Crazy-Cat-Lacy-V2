@@ -1,145 +1,95 @@
+var player;
+var kittens;
+var kitten;
+var throwTime = 0;
+var meows = [];
+var people;
+var person;
+
+//var greenAliens;
+var projectiles;
+var projectileSpeed = 100;
 var cursors;
 var jumpButton;
-
-var player;
 var playerDirection;
-var playerStart;
 
-var coins;
-var coin_sound;
+var bossAppeared;
 
 var background_music;
-
-var jump_sound;
 var death_sound;
 
-var levelID =1;
+var time;
+var display;
+var gameOver = 0;
 
 function initPlayer(game){
 	playerStart = findObjectsByType('playerStart', map, 'Objects');
-	player = game.add.sprite(playerStart[0].x + 8, playerStart[0].y+9, 'player');
+	player = game.add.sprite(playerStart[0].x, playerStart[0].y, 'player');
 	player.anchor.setTo(0.5,0.5);
 
 	game.physics.arcade.enable(player);
 	player.body.bounce.y = 0.0;
-	player.body.gravity.y = 600;
+	player.body.gravity.y = 800;
 	player.body.collideWorldBounds = true;
-	player.body.height = 26;
-	player.body.width = 18;
-	player.body.maxVelocity.x = 200;
 
-	//add animation here
-	player.animations.add('walk_right', [12, 13, 14, 15, 16, 17,], 10, true);
-	player.animations.add('walk_left', [6, 7, 8, 9, 10, 11], 10, true);
-	player.animations.add('idle_right', [2, 3], 20, true);
-	player.animations.add('idle_left', [0, 1], 20, true);
-	player.animations.add('walk_up', [0, 1, 2], 10, true);
-	player.animations.add('walk_down', [18, 19, 20], 10, true);
+	player.animations.add('walk_right', [9, 10, 11], 10, true);
+	player.animations.add('walk_left', [27, 28, 29], 10, true);
+	player.animations.add('throw_right', [15, 12, 9], 6, false);
+	player.animations.add('throw_left', [33, 30, 27], 6, false);
 
 	playerDirection = 'right';
-	jump_sound = game.add.audio('jump_sound');
-	death_sound = game.add.audio('death_sound');
+
+	kittens = game.add.group();
+	kittens.enableBody = true;
+	kittens.physicsBodyType = Phaser.Physics.ARCADE;
+	kittens.createMultiple(30, 'kitten');
+	kittens.setAll('anchor.x', 0.5);
+	kittens.setAll('anchor.y', 0.5);
+	kittens.setAll('outOfBoundsKill', true);
+	kittens.setAll('checkWorldBounds', true);
+	kittens.setAll('body.gravity.y', 400);
+
+	projectiles = game.add.group();
+	projectiles.enableBody = true;
+	projectiles.physicsBodyType = Phaser.Physics.ARCADE;
+	projectiles.createMultiple(30, 'projectile');
+	projectiles.setAll('anchor.x', 0.5);
+	projectiles.setAll('anchor.y', 0.5);
+	projectiles.setAll('outOfBoundsKill', true);
+	projectiles.setAll('checkWorldBounds', true);
+	
 }
 
-function initCoins(game){
-	coins = populateGroup('coin', game);
-	coins.setAll('enableBody', true);
-	coins.setAll('physicsBodyType', Phaser.Physics.ARCADE);
-	coins.callAll('animations.add', 'animations', 'spin', [0,1,2,3,4,5], 10, true);
-	coins.setAll('anchor.x', 0.5);
-	coins.setAll('anchor.y', 0.5);
-	coins.setAll('height', 10);
-	coins.setAll('width', 9);
+function initAliens(game){
+	greenAliens = populateGroup('greenAlien', game);
+	greenAliens.setAll('height', 32);
+	greenAliens.setAll('width', 32);
+	greenAliens.setAll('enableBody', true);
+	greenAliens.setAll('physicsBodyType', Phaser.Physics.ARCADE);
+	greenAliens.setAll('anchor.x', 0.5);
+	greenAliens.setAll('anchor.y', 0.5);
+	greenAliens.setAll('body.maxVelocity.y', 150);
+	greenAliens.setAll('wasInCamera', false);
 
-	coin_sound = game.add.audio('collect_coin');
-}
+	blueAliens = populateGroup('blueAlien', game);
+	blueAliens.setAll('height', 32);
+	blueAliens.setAll('width', 32);
+	blueAliens.setAll('enableBody', true);
+	blueAliens.setAll('physicsBodyType', Phaser.Physics.ARCADE);
+	blueAliens.setAll('anchor.x', 0.5);
+	blueAliens.setAll('anchor.y', 0.5);
 
-function killCoin(player, coin){
-	coin_sound.play();
-	coin.kill();
-}
-function updatePlatformer(game){
-	game.physics.arcade.collide(player, collisionLayer);
+	pinkAliens = populateGroup('pinkAlien', game);
+	pinkAliens.setAll('height', 32);
+	pinkAliens.setAll('width', 32);
+	pinkAliens.setAll('enableBody', true);
+	pinkAliens.setAll('physicsBodyType', Phaser.Physics.ARCADE);
+	pinkAliens.setAll('anchor.x', 0.5);
+	pinkAliens.setAll('anchor.y', 0.5);
+	pinkAliens.setAll('body.maxVelocity.x', 150);
+	pinkAliens.setAll('wasInCamera', false);
 
-	game.physics.arcade.overlap(player, death, killPlayer, null, game);
-	game.physics.arcade.overlap(player, coins, killCoin, null, game);
-	coins.callAll('play', null, 'spin');
 
-	player.body.acceleration.y = 0;
-	player.body.acceleration.x = 0;
-	player.body.drag.y = 0;	
-
-	if(player.body.onFloor()){
-		if(player.body.velocity.x < 0){
-			player.animations.play('walk_left');
-		}
-		else if(player.body.velocity.x > 0){
-			player.animations.play('walk_right');
-		}
-	}
-	if (cursors.left.isDown)
-	{
-		//  Move to the left
-		if(player.body.velocity.x > 0){
-			player.body.acceleration.x = -400;
-		}
-		else{
-			player.body.acceleration.x = -200;
-			playerDirection = 'left';
-		}
-//		if(player.body.onFloor()){
-//			playerDirection = 'left';
-	//		player.animations.play('walk_left');
-		//}
-	}
-	else if (cursors.right.isDown)
-	{
-		//  Move to the right
-		if(player.body.velocity.x < 0){
-			player.body.acceleration.x = 400;
-
-		}
-		else{
-			player.body.acceleration.x = 200;
-			playerDirection = 'right';
-		}
-//		if(player.body.onFloor()){
-//			playerDirection = 'right';
-	//		player.animations.play('walk_right');
-		//}
-	}
-	else{
-		 if(player.body.onFloor()){
-			player.body.drag.x = 300;
-		}
-		else{
-			player.body.drag.x = 150;
-		}
-	}
-	if(player.body.velocity.x ===0){
-		player.animations.play('idle_left');
-		if(playerDirection === 'right'){
-			player.animations.play('idle_right');
-		}
-	}
-
-	// Allow player to jump if they are touching the ground.
-	if (jumpButton.isDown)
-	{
- 		if(player.body.onFloor()){
-			player.body.velocity.y = -400;
-			jump_sound.play();
-
-		}
-		player.animations.stop();
-		player.frame = 4;
-		if(playerDirection === 'right'){
-			player.frame = 5;
-		}
-	}
-	else if(player.body.velocity.y < 0){
-		player.body.drag.y = 600;
-	}
 }
 
 function setAdvancedCollision(collision){
@@ -185,38 +135,308 @@ function populateGroup(type, state){
 	return thisGroup;
 }
 
+function updatePlayer(game){
+	if(player.body.onFloor()){
+		player.body.velocity.x = 0;
+	}
+	if (cursors.up.isDown)
+	{
+		if(game.time.now > throwTime){
+			if(playerDirection === 'right'){
+				player.animations.play('throw_right',null, false);
+			}
+			else{
+				player.animations.play('throw_left', null, false);
+			}
+			throwKitten(game);
+		}
+	}
+//	else if (cursors.left.isDown && player.body.onFloor())
+	else if (cursors.left.isDown)
+	{
+		//  Move to the left
+		playerDirection = 'left';
+		player.body.velocity.x = -150;
+
+//			player.scale.x = 1;
+//			if(player.body.onFloor()){
+			player.animations.play('walk_left');
+//			}
+//			else{
+//				player.animations.stop();
+//				player.frame = 0; 
+//			}
+	}
+//	else if (cursors.right.isDown && player.body.onFloor())
+	else if (cursors.right.isDown)
+	{
+		//  Move to the right
+		player.body.velocity.x = 150;
+		playerDirection = 'right';
+//			player.scale.x = -1;
+//			if(player.body.onFloor()){
+			player.animations.play('walk_right');
+//			}
+//			else{
+//				player.animations.stop();
+//				player.frame = 0; 
+//			}
+	}
+
+	else
+	{
+		if(!(player.animations.currentAnim === player.animations.getAnimation('throw_right'))||(player.animations.currentAnim === player.animations.getAnimation('throw_left'))){
+			
+			player.animations.stop();
+			player.frame = 27;
+			if(playerDirection === 'right'){
+				player.frame = 9;
+			}
+		}
+	}
+	// Allow player to jump if they are touching the ground.
+	if (jumpButton.isDown && player.body.onFloor())
+	{
+		player.body.velocity.y = -300;
+	}
+}
+
+function updateAliens(game){
+	updateGreenAliens(game);
+	updateBlueAliens(game);
+	updatePinkAliens(game);
+	updateBeigeAliens(game);
+}
+
+function updateGreenAliens(game){
+	greenAliens.children.forEach(function(entry){
+		if(entry.inCamera && entry.exists){
+			if(entry.x < game.camera.x){
+				entry.body.velocity.x = 75;
+			}
+			if(entry.x+entry.width > game.camera.x + 800){
+				entry.body.velocity.x = -75;
+			}
+			if(!entry.wasInCamera){
+				entry.wasInCamera = true;
+				entry.body.velocity.y = entry.body.maxVelocity.y;
+				entry.shotTime = game.time.now;
+				entry.body.velocity.x = -75;
+			}
+//			entry.body.velocity.x = -100;
+			if(entry.body.velocity.y === entry.body.maxVelocity.y){
+				entry.body.acceleration.y = -400;
+			}
+			else if(entry.body.velocity.y === -entry.body.maxVelocity.y){
+				entry.body.acceleration.y = 400;
+			}
+			if(game.time.now > entry.shotTime){
+				var gun = {};
+//				gun.x = entry.x+entry.width/2;
+//				gun.y = entry.y + entry.height;
+				gun.x = entry.x;
+				gun.y = entry.y + entry.height/2;				
+				var polDif = getPolarDifference(gun,player);
+				var projectile = projectiles.getFirstExists(false);
+//				var projectileSpeed = 200;
+				if(projectile){
+					projectile.reset(gun.x, gun.y);
+					projectile.body.velocity.x = projectileSpeed * Math.cos(polDif.angle);
+					projectile.body.velocity.y = projectileSpeed * -Math.sin(polDif.angle);
+				}
+				entry.shotTime = game.time.now + 2500;
+			}
+		}
+		else{
+			entry.wasInCamera = false;
+			entry.body.velocity.y = 0;
+			entry.body.velocity.x = 0;
+		}
+		
+	});
+}
+
+function updateBlueAliens(game){
+	blueAliens.children.forEach(function(entry){
+		if(entry.inCamera && entry.exists){
+			if(!entry.wasInCamera){
+				entry.wasInCamera = true;
+				entry.shotTime = game.time.now;
+			}
+			if(game.time.now > entry.shotTime){
+				var gun = {};
+//				gun.x = entry.x + entry.width/2;
+//				gun.y = entry.y + entry.height;
+				gun.x = entry.x;
+				gun.y = entry.y + entry.height/2;
+				var polDif = getPolarDifference(gun,player);
+				var projectile = projectiles.getFirstExists(false);
+//				var projectileSpeed = 200;
+				if(projectile){
+					projectile.reset(gun.x,gun.y);
+					projectile.body.velocity.x = projectileSpeed * Math.cos(polDif.angle);
+					projectile.body.velocity.y = projectileSpeed * -Math.sin(polDif.angle);
+				}
+				entry.shotTime = game.time.now + 1500;
+			}
+		}
+		else{
+			entry.wasInCamera = false;
+		}
+	});
+}
+
+function updatePinkAliens(game){
+	pinkAliens.children.forEach(function(entry){
+		if(entry.inCamera && entry.exists){
+			if(!entry.wasInCamera){
+				entry.wasInCamera = true;
+				entry.shotTime = game.time.now;
+				entry.body.velocity.x = entry.body.maxVelocity.x;
+			}
+			if(entry.body.velocity.x === entry.body.maxVelocity.x){
+				entry.body.acceleration.x = -200;
+			}
+			else if(entry.body.velocity.x === -entry.body.maxVelocity.x){
+				entry.body.acceleration.x = 200;
+			}
+			if(game.time.now > entry.shotTime){
+				var gun = {};
+				var playerPlus = {};
+				gun.x = entry.x;
+				gun.y = entry.y + entry.height/2;
+				playerPlus.x = player.x + 48;
+				playerPlus.y = player.y;
+				var polDif = getPolarDifference(gun,playerPlus);
+				var projectile = projectiles.getFirstExists(false);
+//				projectileSpeed = 150;
+				if(projectile){
+					projectile.reset(gun.x, gun.y);
+					projectile.body.velocity.x = projectileSpeed * Math.cos(polDif.angle);
+					projectile.body.velocity.y = projectileSpeed * -Math.sin(polDif.angle);
+				}
+				entry.shotTime = game.time.now + 1750;
+			}
+		}
+		else{
+			entry.wasInCamera = false;
+		}
+	});
+}
+
+function updateBeigeAliens(game){
+
+}
+
 function killPlayer(player, death){
 	console.log("dead");
 	background_music.stop();
+	player.kill();
 	death_sound.play();
 	death_sound.onStop.add(restart_level,this);
-	player.kill();
 
-
+//	restart_level();
 }
+
 function restart_level(){
 	map.destroy();
 	this.world.setBounds(0,0,0,0);
 	this.state.restart();
 }
 
-function createPlatformer(game){
-		fringeLayer = map.createLayer('Fringe');
-		collisionLayer = map.createLayer('Collision');
-		collisionLayer.visible = false;
+function createAction(game){
 
-		game.physics.arcade.enable(collisionLayer);
-		setAdvancedCollision(collisionLayer);
+	fringeLayer = map.createLayer('background');
+	collisionLayer = map.createLayer('collision');
 
-		fringeLayer.resizeWorld();
+	fringeLayer.resizeWorld();
+	collisionLayer.visible = false;
 
-		death = populateGroup('death', game);
-		initCoins(game);
-		initPlayer(game);
+	game.physics.arcade.enable(collisionLayer);
+	map.setCollisionByExclusion([],true,collisionLayer);
+	background_music = game.add.audio('never_to_return');
+	background_music.play('',0,1,true,true);
+	death_sound = game.add.audio('death_sound');
+	for(var i=1; i<=8; i++){
+		meows.push(game.add.audio('cat' + i));
+	}
 
-		cursors = game.input.keyboard.createCursorKeys();
-		jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	initPlayer(game);
+	initAliens(game);
 
-		game.camera.follow(player);
-		game.camera.deadzone = new Phaser.Rectangle(350,100,100,400);
+	bossAppeared = false;
+
+	cursors = game.input.keyboard.createCursorKeys();
+	jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+	game.camera.follow(player);
+	game.camera.deadzone = new Phaser.Rectangle(3*800/7,100,800/7,400);
+}
+
+function throwKitten(game){
+	if(game.time.now > throwTime){
+		kitten = kittens.getFirstExists(false);
+		if(kitten){
+			var rand = Math.floor((Math.random() * 16));
+			if(rand <8){
+				meows[rand].play();
+			}
+			if(playerDirection === 'left'){
+				kitten.reset(player.x - 8, player.y -9);
+//				kitten.body.velocity.x = player.body.velocity.x -250;
+				kitten.body.velocity.x = player.body.velocity.x -200;
+			}
+			else{
+				kitten.reset(player.x + 8, player.y -9);
+//				kitten.body.velocity.x = player.body.velocity.x + 250;
+				kitten.body.velocity.x = player.body.velocity.x + 200;
+			}
+//			kitten.body.velocity.y = player.body.velocity.y -120;
+			kitten.body.velocity.y = player.body.velocity.y - 75;
+			throwTime = game.time.now + 500;
+		}
+	}
+}
+
+function getPolarDifference(object1, object2){
+	var displacement = {};
+	var ret = {};
+	displacement.x = object2.x - object1.x;
+	displacement.y = object1.y - object2.y; //game world exists in quadrant 4
+	displacement.abs = Math.sqrt((displacement.x*displacement.x)+(displacement.y*displacement.y));
+	ret.displacement = displacement.abs;
+	ret.angle = Math.atan2((displacement.y),(displacement.x));
+	return ret;
+}
+
+function updateAction(game){
+	game.physics.arcade.collide(player, collisionLayer);
+	game.physics.arcade.overlap(player, projectiles, killPlayer, null, game);
+	game.physics.arcade.overlap(kittens, greenAliens, hurtAlien, null, game);
+	game.physics.arcade.overlap(kittens, blueAliens, hurtAlien, null, game);
+	game.physics.arcade.overlap(kittens, pinkAliens, hurtAlien, null, game);
+	updatePlayer(game);
+	updateAliens(game);
+
+	if(!bossAppeared){
+		if(blueAliens.total + greenAliens.total + pinkAliens.total === 0){
+			bossAppeared = true;
+			beigeAliens = populateGroup('beigeAlien', game);
+			beigeAliens.setAll('height', 128);
+			beigeAliens.setAll('width', 128);
+			beigeAliens.setAll('enableBody', true);
+			beigeAliens.setAll('physicsBodyType', Phaser.Physics.ARCADE);
+			beigeAliens.setAll('anchor.x', 0.5);
+			beigeAliens.setAll('anchor.y', 0.5);
+			beigeAliens.setAll('wasInCamera', false);
+			background_music.stop();
+			background_music = game.add.audio('spinning');
+			background_music.play('',0,1,true,true);
+		}
+	}	
+}
+
+function hurtAlien(kitten, alien){
+	kitten.kill();
+	alien.kill();
 }

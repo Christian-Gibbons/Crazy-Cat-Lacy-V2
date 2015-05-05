@@ -6,32 +6,29 @@ BasicGame.Preloader = function (game) {
 };
 BasicGame.Preloader.prototype = {
 	preload: function () {
-	// These are the assets we loaded in Boot.js
-	// A nice sparkly background and a loading progress bar
-//		this.background = this.add.sprite(0, 0, 'preloaderBackground');
-//		this.preloadBar = this.add.sprite(300, 400, 'preloaderBar');
-	// This sets the preloadBar sprite as a loader sprite.
-	// What that does is automatically crop the sprite from 0 to full-width
-	// as the files below are loaded in.
-//		this.load.setPreloadSprite(this.preloadBar);
+		this.load.tilemap('soviet', 'assets/tilemaps/maps/soviet.json', null, Phaser.Tilemap.TILED_JSON);
 
-		this.load.tilemap('map1', 'assets/tilemaps/maps/level1.json', null, Phaser.Tilemap.TILED_JSON);
-		this.load.tilemap('map2', 'assets/tilemaps/maps/level2.json', null, Phaser.Tilemap.TILED_JSON);
-		this.load.tilemap('map3', 'assets/tilemaps/maps/level3.json', null, Phaser.Tilemap.TILED_JSON);
-		this.load.tilemap('map4', 'assets/tilemaps/maps/level4.json', null, Phaser.Tilemap.TILED_JSON);
-		this.load.image('platforms', 'assets/tilemaps/tilesets/cartoony_platformer/tiles_22.png');
-		this.load.image('box', 'assets/tilemaps/tilesets/tiles/box.png');
-		this.load.image('bricks', 'assets/tilemaps/tilesets/bricks/scraps_bricks.png');
-//		this.load.spritesheet('player', 'assets/spritesheets/sara/sara 16x18 source.png', 16, 18);
-		this.load.spritesheet('player', 'assets/spritesheets/Margery_Limited/Margery_sheet.png', 24, 26);
-		this.load.spritesheet('coin', 'assets/spritesheets/coin/spin_coin_big_strip6.png', 9, 10);
-		this.load.image('leprechaun', 'assets/spritesheets/surprise/leprechaun.png');
-		this.load.audio('collect_coin', 'assets/sounds/8-Bit Sound Library/Mp3/Collect_Point_01.mp3');
-		this.load.audio('grassy_music', 'assets/music/mvrasseli_play_the_game_0.mp3');
-		this.load.audio('underground_music', 'assets/music/A New Camp.mp3');
-		this.load.audio('jump_sound', 'assets/sounds/8-Bit Sound Library/Mp3/Jump_03.mp3');
+		this.load.image('tiles', 'assets/tilemaps/tiles/PostSovietTile.png');
+		this.load.spritesheet('player', 'assets/spritesheets/sara_16x18.png', 16, 18);
+		this.load.spritesheet('person', 'assets/spritesheets/Hero.png', 16, 16);
+		this.load.image('kitten', 'assets/spritesheets/catsprite.png');
+		this.load.image('greenAlien', 'assets/spritesheets/Alien_UFO_pack/PNG/shipGreen_manned.png');
+		this.load.image('blueAlien', 'assets/spritesheets/Alien_UFO_pack/PNG/shipBlue_manned.png');
+		this.load.image('pinkAlien', 'assets/spritesheets/Alien_UFO_pack/PNG/shipPink_manned.png');
+		this.load.image('beigeAlien', 'assets/spritesheets/Alien_UFO_pack/PNG/shipBeige_manned.png');
+		this.load.image('projectile', 'assets/spritesheets/projectile.png');
+		this.load.audio('cat1', 'assets/sounds/cat/Cat 1.wav');
+		this.load.audio('cat2', 'assets/sounds/cat/Cat 2.wav');
+		this.load.audio('cat3', 'assets/sounds/cat/Cat 3.wav');
+		this.load.audio('cat4', 'assets/sounds/cat/Cat 4.wav');
+		this.load.audio('cat5', 'assets/sounds/cat/Cat 5.wav');
+		this.load.audio('cat6', 'assets/sounds/cat/Cat 6.wav');
+		this.load.audio('cat7', 'assets/sounds/cat/Cat 7.wav');
+		this.load.audio('cat8', 'assets/sounds/cat/Cat 8.wav');
+		this.load.audio('never_to_return', 'assets/music/Never_to_Return.mp3');
+		this.load.audio('spinning', 'assets/music/Spinning.mp3');
 		this.load.audio('death_sound', 'assets/sounds/8-Bit Sound Library/Mp3/Explosion_04.mp3');
-		console.log('post preload');
+
 	},
 	create: function () {
 	// Once the load has finished we disable the crop because we're going to sit in the update loop for a short while as the music decodes
