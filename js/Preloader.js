@@ -28,6 +28,7 @@ BasicGame.Preloader.prototype = {
 		this.load.audio('never_to_return', 'assets/music/Never_to_Return.mp3');
 		this.load.audio('spinning', 'assets/music/Spinning.mp3');
 		this.load.audio('death_sound', 'assets/sounds/8-Bit Sound Library/Mp3/Explosion_04.mp3');
+		this.load.audio('damage_sound', 'assets/sounds/8-Bit Sound Library/Mp3/Explosion_02.mp3');
 
 	},
 	create: function () {

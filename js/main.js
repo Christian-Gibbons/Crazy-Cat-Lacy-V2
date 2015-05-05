@@ -17,6 +17,7 @@ var bossAppeared;
 
 var background_music;
 var death_sound;
+var damage_sound;
 
 var time;
 var display;
@@ -205,7 +206,9 @@ function updateAliens(game){
 	updateGreenAliens(game);
 	updateBlueAliens(game);
 	updatePinkAliens(game);
-	updateBeigeAliens(game);
+	if(bossAppeared){
+		updateBeigeAliens(game);
+	}
 }
 
 function updateGreenAliens(game){
@@ -325,7 +328,62 @@ function updatePinkAliens(game){
 }
 
 function updateBeigeAliens(game){
-
+	beigeAliens.children.forEach(function(entry){
+		var gun = {};
+		gun.x = entry.x;
+		gun.y = entry.y + entry.height/2;
+		if(entry.exists){
+			if(game.time.now > entry.gimbalShotTime){
+				var projectile = projectiles.getFirstExists(false);
+				if(projectile){
+					for(var i = 0; i<4; i++){
+						var projectile = projectiles.getFirstExists(false);
+						if(projectile){
+							//gun.x = entry.x+(i*entry.width/4)-entry.width/2;
+							var polDif = getPolarDifference(gun,player);
+							projectile.reset(gun.x, gun.y);
+							projectile.body.velocity.x = projectileSpeed * Math.cos(polDif.angle + .3*(i-2));
+							projectile.body.velocity.y = projectileSpeed * -Math.sin(polDif.angle + .3*(i-2));
+						}
+					}
+/*
+					projectile.reset(gun.x,gun.y);
+					projectile.body.velocity.x = projectileSpeed * Math.cos(polDif.angle);
+					projectile.body.velocity.y = projectileSpeed * -Math.sin(polDif.angle);
+				*/}
+				entry.gimbalShotTime = game.time.now + 3000;
+			}
+			if(game.time.now > entry.spreadShotTime){
+				for(var i = 0; i<4; i++){
+					var projectile = projectiles.getFirstExists(false);
+					if(projectile){
+						projectile.reset(entry.x+(i*entry.width/4)-entry.width/2, gun.y);
+						projectile.body.velocity.x = projectileSpeed * Math.cos(3*Math.PI/2+ .1*(i-2));
+						projectile.body.velocity.y = projectileSpeed * -Math.sin(3*Math.PI/2+ .1*(i-2));
+					}
+				}
+				entry.spreadShotTime = game.time.now + 1500;
+			}
+			if(game.time.now > entry.resurrectTime){
+				var resurrect = Math.floor(3*Math.random());
+				switch(resurrect){
+					case 0:
+						var alien = greenAliens.getFirstExists(false);
+						break;
+					case 1:
+						var alien = blueAliens.getFirstExists(false);
+						break;
+					case 2:
+						var alien = pinkAliens.getFirstExists(false);
+						break;
+				}
+				if(alien){
+					alien.reset(game.camera.x + Math.floor(600*Math.random()),game.camera.y+250 + Math.floor(250*Math.random()));
+				}
+				entry.resurrectTime = game.time.now + 10000;
+			}	
+		}
+	});
 }
 
 function killPlayer(player, death){
@@ -357,6 +415,7 @@ function createAction(game){
 	background_music = game.add.audio('never_to_return');
 	background_music.play('',0,1,true,true);
 	death_sound = game.add.audio('death_sound');
+	damage_sound = game.add.audio('damage_sound');
 	for(var i=1; i<=8; i++){
 		meows.push(game.add.audio('cat' + i));
 	}
@@ -417,8 +476,11 @@ function updateAction(game){
 	game.physics.arcade.overlap(kittens, pinkAliens, hurtAlien, null, game);
 	updatePlayer(game);
 	updateAliens(game);
-
-	if(!bossAppeared){
+	
+	if(bossAppeared){
+		game.physics.arcade.overlap(kittens, beigeAliens, hurtAlien, null, game);
+	}
+	else{
 		if(blueAliens.total + greenAliens.total + pinkAliens.total === 0){
 			bossAppeared = true;
 			beigeAliens = populateGroup('beigeAlien', game);
@@ -429,6 +491,12 @@ function updateAction(game){
 			beigeAliens.setAll('anchor.x', 0.5);
 			beigeAliens.setAll('anchor.y', 0.5);
 			beigeAliens.setAll('wasInCamera', false);
+			beigeAliens.setAll('health', 15);
+			beigeAliens.children.forEach(function(entry){
+				entry.gimbalShotTime = game.time.now;
+				entry.spreadShotTime = game.time.now;
+				entry.resurrectTime = game.time.now;
+			});
 			background_music.stop();
 			background_music = game.add.audio('spinning');
 			background_music.play('',0,1,true,true);
@@ -438,5 +506,9 @@ function updateAction(game){
 
 function hurtAlien(kitten, alien){
 	kitten.kill();
-	alien.kill();
+	alien.health--;
+	if(alien.health <= 0){
+		alien.kill();
+	}
+	damage_sound.play();
 }
